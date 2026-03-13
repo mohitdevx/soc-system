@@ -7,7 +7,7 @@ worker:
   name: "soc-agent-worker"
   description: "Worker for SOC agent"
   version: "0.0.1"
-  backend_url: "http://localhost:8000/api/test"
+  backend_url: "http://backend2:8000/api/test"
 
 app: 
   id : "soc-agent-001"
