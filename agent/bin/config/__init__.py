@@ -1,4 +1,3 @@
-__all__ = ['app_config']
+__all__ = ['cfg']
 
-from .app_config import app_config
-
+from .app_config import cfg

@@ -1,4 +1,4 @@
-from config import app_config as cfg
+from ..config import cfg
 import msgpack
 
 def log_parser(logs: str) -> dict:

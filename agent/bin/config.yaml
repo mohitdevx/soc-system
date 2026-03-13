@@ -3,10 +3,11 @@
 # APPLICATION CONFIGURATION
 
 worker:
+  id: "soc-agent-worker-001"
   name: "soc-agent-worker"
   description: "Worker for SOC agent"
   version: "0.0.1"
-  backend_url: "http://localhost:4444"
+  backend_url: "http://localhost:8000/api/test"
 
 app: 
   id : "soc-agent-001"
@@ -16,12 +17,6 @@ app:
 
 # LOGGING CONFIGURATION
 files:
-  - name: "apache2.log"
-    path: "/var/log/apache2/access.log"
-
-  - name: "nginx.log"
-    path: "/var/log/d/access.log"
-
   - name: "apache2.log"
     path: "/var/log/apache2/access.log"
 

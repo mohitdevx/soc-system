@@ -1,17 +1,16 @@
-import yaml # type: ignore
+# agent/bin/config/app_config.py
+import yaml # type: ignore 
 import os 
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-CONFIG_PATH = os.path.join(ROOT, "config.yaml")
+CONFIG_PATH = os.path.join(ROOT, "..", "config.yaml")
 
-def app_config(config :str):
+def load_yaml():
     try:
-        with open(config, "r") as cfg:
-            data = yaml.safe_load(config)
-            return data 
-
+        with open(CONFIG_PATH, "r") as f:
+            return yaml.safe_load(f)
     except Exception as e:
-        print("Error loading config file")
-        raise e 
+        print(f"Error loading config: {e}")
+        return {}
 
-app_config(CONFIG_PATH)
+cfg = load_yaml()

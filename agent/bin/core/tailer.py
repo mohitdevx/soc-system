@@ -1,7 +1,8 @@
 import queue 
-from models import log_parser
+from ..models import log_parser
+import json
 
-event_queue = queue.Queue
+event_queue = queue.Queue()
 
 def tail_file(path):
     print(path)
@@ -12,7 +13,7 @@ def tail_file(path):
         while True:
             if line: 
                 event_queue.put(log_parser(line))
-                print(line.strip())
+                # print(json.dumps(log_parser(line), indent=2))
             line = f.readline()
             continue
 
