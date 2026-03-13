@@ -1,0 +1,32 @@
+# THIS IS A TEMPLATE CONFIGURATION FILE
+# Copy this file to config.yaml and modify it as needed
+# APPLICATION CONFIGURATION
+
+worker:
+  name: "soc-agent-worker"
+  description: "Worker for SOC agent"
+  version: "0.0.1"
+  backend_url: "http://localhost:4444"
+
+app: 
+  id : "soc-agent-001"
+  name: "soc-agent"
+  version: "0.0.1"
+  description: "A SOC agent for monitoring and alerting"
+
+# LOGGING CONFIGURATION
+files:
+  - name: "apache2.log"
+    path: "/var/log/apache2/access.log"
+
+  - name: "nginx.log"
+    path: "/var/log/d/access.log"
+
+  - name: "apache2.log"
+    path: "/var/log/apache2/access.log"
+
+  - name: "apache2.log"
+    path: "/var/log/apache2/access.log"
+
+  - name: "apache2.log"
+    path: "/var/log/apache2/access.log"
