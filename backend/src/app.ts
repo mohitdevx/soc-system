@@ -1,5 +1,7 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import cors from "cors";
+import { agentRoute } from "./routes/agentRoute";
+import { globalErrorHandler } from "./utils/globalError";
 
 export const app: Express = express();
 
@@ -11,9 +13,6 @@ const appMiddleware = [
 ];
 
 app.use(appMiddleware);
-
-app.get("/hello", (req: Request, res: Response): Response => {
-  return res.status(200).json({ msg: "hello world ! server is working" });
-});
-
+app.use("/api/v1/agent", agentRoute);
+app.use(globalErrorHandler);
 
