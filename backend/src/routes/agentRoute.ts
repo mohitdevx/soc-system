@@ -3,7 +3,7 @@ import { ApiResponse } from "../utils/apiResponse";
 import { AppError } from "../utils/errorClass";
 import { Request, Response } from "express";
 import { AgentController } from "../controller/agent.controller";
-import { func2, logParser } from "../service/agent.service";
+import { bruteForceDectection, logParser } from "../service/agent.service";
 
 export const agentRoute = Router();
 
@@ -23,7 +23,7 @@ const demo = (data: any) => {
 agentRoute.post("/stream", async (req: Request, res: Response) => {
     const pipeline = new AgentController(req.body)
     pipeline.register(logParser)
-    pipeline.register(func2)
+    pipeline.register(bruteForceDectection)
     await pipeline.run()
     return ApiResponse.success(res, "success", pipeline.stream)
 })

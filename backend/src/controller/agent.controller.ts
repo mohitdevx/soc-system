@@ -17,8 +17,7 @@ export class AgentController {
 
     async run() {
         this.processes.forEach((process) => {
-          const proc = process(this.stream)
-          console.log("This is process -> ", proc)
+            process(this.stream)
         })
     }
 }
