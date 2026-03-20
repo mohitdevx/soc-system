@@ -6,3 +6,7 @@ Author-email: mohit kumar <mohitdevx@proton.me>
 Requires-Dist: aiohttp>=3.13.1
 Requires-Dist: pyyaml>=6.0.3
 Requires-Dist: msgpack>=1.1.2
+Requires-Dist: fastapi>=0.135.1
+Requires-Dist: uvicorn>=0.42.0
+Requires-Dist: pydantic>=2.7.3
+Requires-Dist: dotenv

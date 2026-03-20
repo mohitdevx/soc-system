@@ -1,23 +1,31 @@
-import { logSign, processSign } from "../utils/processSign";
+import { agentStream, processSign } from "../utils/processSign";
 
-type process = Array<processSign>
+interface funcSign {
+    name: string
+    func: processSign
+}
 
-export class AgentController {
-    public stream: logSign;
+type process = Array<funcSign>
+
+export class AppEngine {
+    public dataStreams: agentStream;
     private processes: process = [];
 
-    constructor(stream: logSign) {
-        this.stream = stream;
+    constructor(dataStreams: agentStream) {
+        this.dataStreams = dataStreams;
     }
 
-    register(method: processSign) {
-        this.processes.push(method)
-        return method;
+    register(func: funcSign) {
+        this.processes.push(func)
     }
 
     async run() {
-        this.processes.forEach((process) => {
-            process(this.stream)
-        })
+        for (const stream of this.dataStreams.streams) {
+            for (const process of this.processes) {
+                if (process?.name === stream?.log_name) {
+                    await process.func(stream)
+                }
+            }
+        }
     }
 }

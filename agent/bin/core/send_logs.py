@@ -5,9 +5,11 @@ from .tailer import event_queue
 from ..models import payload_streams
 import time
 import json
+import os
+from dotenv import load_dotenv 
+load_dotenv()
 
-BACKEND_URL = cfg["worker"]["backend_url"] or "http://localhost:8000"
-
+BACKEND_URL = os.getenv('BACKEND_URL') or cfg["worker"]["backend_url"] or "http://localhost:8000"
 
 def send_logs(timeout):
     while True:

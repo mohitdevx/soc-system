@@ -2,16 +2,26 @@ import threading
 from ..config import cfg
 from .send_logs import send_logs
 from .tailer import tail_file
+from ..action import run
+
 
 def start_agent():
     print("deamon is running....")
-    files = cfg['files']
+    files = cfg["files"]
     threads = []
 
-    threading.Thread(target=send_logs,args=(5,), daemon=True).start()
+    threading.Thread(target=run, args=(), daemon=True).start()
+    threading.Thread(target=send_logs, args=(5,), daemon=True).start()
 
     for elem in files:
-        t = threading.Thread(target=tail_file, args=(elem['path'],))
+        t = threading.Thread(
+            target=tail_file,
+            args=(
+                elem["path"],
+                elem["name"],
+                elem["type"],
+            ),
+        )
 
         # print(len(threads))
         threads.append(t)
@@ -21,4 +31,3 @@ def start_agent():
 
     for t in threads:
         t.join()
-
