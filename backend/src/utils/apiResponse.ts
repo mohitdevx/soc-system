@@ -9,7 +9,7 @@ interface responsSchema {
 }
 
 export class ApiResponse {
-    static created(res: Response<responsSchema>, message: string = "Created", data: any): Response<responsSchema> {
+    static created(res: Response, message: string = "Created", data: any): Response<responsSchema> {
         return res.status(201).send({
             message,
             status: "success",
@@ -19,7 +19,7 @@ export class ApiResponse {
         })
     }
 
-    static success(res: Response<responsSchema>, message: string = "success", data: any = null): Response<responsSchema> {
+    static success(res: Response, message: string = "success", data: any = null): Response<responsSchema> {
         return res.status(200).send({
             message,
             status: "success",
@@ -29,7 +29,7 @@ export class ApiResponse {
         })
     }
 
-    static fail(res: Response<responsSchema>, message: string = "fail", statusCode: number = 400, err: any = null): Response<responsSchema> {
+    static fail(res: Response, message: string = "fail", statusCode: number = 400, err: any = null): Response<responsSchema> {
         return res.status(200).send({
             message,
             status: "fail",
@@ -39,7 +39,7 @@ export class ApiResponse {
         })
     }
 
-    static error(res: Response<responsSchema>, message: string = "error", statusCode: number = 500, err: any = null): Response<responsSchema> {
+    static error(res: Response, message: string = "error", statusCode: number = 500, err: any = null): Response<responsSchema> {
         return res.status(200).send({
             message,
             status: "error",
