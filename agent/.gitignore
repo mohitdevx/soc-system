@@ -1,0 +1,11 @@
+.venv 
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.db
+agent.egg-info
+.test.py
+build
+
