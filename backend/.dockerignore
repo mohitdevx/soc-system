@@ -1,7 +1,0 @@
-dist
-node_module 
-.env 
-.env.example
-.git 
-.gitignore
-.vscode

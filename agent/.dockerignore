@@ -1,9 +1,0 @@
-__pycache__
-*.pyc
-*.pyo
-*.pyd
-*.pkl
-
-.venv
-Dockerfile
-docker-compose.yml
