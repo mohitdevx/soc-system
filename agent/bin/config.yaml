@@ -18,10 +18,13 @@ app:
 # LOGGING CONFIGURATION
 files:
   - name: "apache2.log"
+    type: "access.log"
     path: "/var/log/apache2/access.log"
 
   - name: "apache2.log"
+    type: "access.log"
     path: "/var/log/apache2/access.log"
 
   - name: "apache2.log"
+    type: "access.log"
     path: "/var/log/apache2/access.log"

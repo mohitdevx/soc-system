@@ -1,13 +1,15 @@
 from ..config import cfg
 import msgpack
 
-def log_parser(logs: str) -> dict:
+def log_parser(logs: str, name: str, ftype: str) -> dict:
     app = cfg['app']
 
     parsed = {
         "agent_name": app['name'],
         "agent_id": app['id'],
         "version": app['version'],
+        "log_name": name,
+        "type":ftype,
         "raw": logs
     }
 

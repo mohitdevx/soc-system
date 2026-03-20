@@ -7,4 +7,6 @@ __pycache__
 *.db
 
 .test.py
+build 
+agent.egg-info
 
