@@ -13,7 +13,6 @@ export const verifyToken = (token: string): object | null => {
     if (!decoded) {
         return null;
     }
-
     return decoded as object;
 };
 

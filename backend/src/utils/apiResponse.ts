@@ -30,22 +30,22 @@ export class ApiResponse {
     }
 
     static fail(res: Response, message: string = "fail", statusCode: number = 400, err: any = null): Response<responsSchema> {
-        return res.status(200).send({
+        return res.status(statusCode).send({
             message,
             status: "fail",
             statusCode,
             timeStamp: new Date().toISOString(),
-            data: err
+            error: err
         })
     }
 
     static error(res: Response, message: string = "error", statusCode: number = 500, err: any = null): Response<responsSchema> {
-        return res.status(200).send({
+        return res.status(statusCode).send({
             message,
             status: "error",
             statusCode,
             timeStamp: new Date().toISOString(),
-            data: err
+            error: err
         })
     }
 }

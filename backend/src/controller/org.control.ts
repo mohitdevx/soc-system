@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { orgLoginFunction, orgRegisterFunction } from "../service/organization";
 import { ApiResponse } from "../utils/apiResponse";
 import { handleAsync } from "../utils/asyncError";
-import { orgRegisterVal } from "../middleware/zod.validation";
+import { orgLogin, orgRegisterVal } from "../middleware/zod.validation";
 import { Cookie } from "../config/cookie";
 
 export const registerOrganization = handleAsync(async (req: Request, res: Response) => {
@@ -14,16 +14,16 @@ export const registerOrganization = handleAsync(async (req: Request, res: Respon
     const validation = orgRegisterVal.safeParse(req.body);
 
     if (!validation.success) {
-        return ApiResponse.fail(res, "Invalid organization data", 400, validation.error);
+        return ApiResponse.fail(res, "Invalid organization data", 400, validation.error.message);
     }
 
     const org = await orgRegisterFunction(req.body);
     Cookie.setCookie(res, "org_token", org.token);
-    return ApiResponse.success(res, "organization registered successfully", org);
+    return ApiResponse.success(res, "organization registered successfully", org.orgData);
 });
 
 
-
+// LOGIN ORGANIZATION 
 export const loginOrganization = handleAsync(async (req: Request, res: Response) => {
     // Extract login credentials from the request body
     if (!req.body) {
@@ -31,7 +31,7 @@ export const loginOrganization = handleAsync(async (req: Request, res: Response)
     }
 
     // Validate the organization credentials
-    const validation = orgRegisterVal.safeParse(req.body)
+    const validation = orgLogin.safeParse(req.body)
 
     if (!validation.success) {
         return ApiResponse.fail(res, "Invalid organization data", 400, validation.error);
@@ -49,4 +49,9 @@ export const loginOrganization = handleAsync(async (req: Request, res: Response)
 
     // Send a success response with the token
     return ApiResponse.success(res, "Login successful", orgData.orgData);
+});
+
+
+export const getOrganization = handleAsync(async (req: Request, res: Response) => {
+    return ApiResponse.success(res, "Organization data retrieved successfully", req.org);
 });

@@ -4,6 +4,9 @@ import { agentRoute } from "./routes/agentRoute";
 import { globalErrorHandler } from "./utils/globalError";
 import msgpack from "msgpack-lite";
 import { ApiResponse } from "./utils/apiResponse";
+import { orgRoute } from "./routes/orgRoute";
+import cookieParser from "cookie-parser";
+import morgan from "morgan";
 
 export const app: Express = express();
 
@@ -12,6 +15,8 @@ const appMiddleware = [
   express.json(),
   cors(),
   express.urlencoded({ extended: true }),
+  cookieParser(),
+  morgan("dev")
 ];
 
 
@@ -35,5 +40,6 @@ app.use((req, res, next) => {
 
 app.use(appMiddleware);
 app.use("/api/v1/agent", agentRoute);
+app.use("/api/org", orgRoute);
 app.use(globalErrorHandler);
 

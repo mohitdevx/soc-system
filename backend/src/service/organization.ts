@@ -1,10 +1,11 @@
-import z from "zod"
+import z, { tuple } from "zod"
 import { orgRegisterVal } from "../middleware/zod.validation"
 import { AppError } from "../utils/errorClass"
 import { Organization, Prisma } from "../generated/prisma/browser"
 import { prisma } from "../config/prisma.client"
 import { comparePasswords, hashPassword } from "../utils/bcrypt"
 import { generateToken } from "../utils/jwt"
+import { redis } from "../config/redis"
 
 type orgSchema = z.infer<typeof orgRegisterVal>
 
@@ -14,21 +15,17 @@ interface Register {
 }
 
 export const orgRegisterFunction = async (data: orgSchema): Promise<Register> => {
-    if (!data.org_name || !data.org_email || !data.org_contact || !data.org_password || !data.confirm_password) {
+    if (!data.name || !data.email || !data.contact || !data.password || !data.password) {
         throw new AppError("All fields are required", 400)
-    }
-
-    if (data.org_password !== data.confirm_password) {
-        throw new AppError("Passwords do not match", 400)
     }
 
     // datbase logic 
     const orgData: Organization = await prisma.organization.create({
         data: {
-            name: data.org_name,
-            email: data.org_email,
-            contactName: data.org_contact,
-            password: await hashPassword(data.org_password),
+            name: data.name,
+            email: data.email,
+            contactName: data.contact,
+            password: await hashPassword(data.password)
         }
     }).catch((error: Prisma.PrismaClientKnownRequestError) => {
         if (error.code === 'P2002') {
@@ -41,7 +38,7 @@ export const orgRegisterFunction = async (data: orgSchema): Promise<Register> =>
         throw new AppError("Organization registration failed", 500)
     }
 
-    const token = generateToken({ id: orgData.id, name: orgData.name });
+    const token = generateToken({ id: orgData.id });
 
     if (!token) {
         throw new AppError("Token generation failed", 500)
@@ -53,28 +50,33 @@ export const orgRegisterFunction = async (data: orgSchema): Promise<Register> =>
 
 // Organization login function
 export const orgLoginFunction = async (data: orgSchema) => {
-    if (!data.org_name || !data.org_email || !data.org_password) {
+    if (!data.name || !data.email || !data.password) {
         throw new AppError("All fields are required", 400)
     }
 
-    const orgData: Organization | null = await prisma.organization.findUnique({
-        where: {
-            email: data.org_email,
-        }
-    })
-
+    const client = await redis;
+    let orgData: any = await client.json.get(data.email);
     if (!orgData) {
-        throw new AppError("Organization not found", 404)
+        orgData = await prisma.organization.findUnique({
+            where: {
+                email: data.email,
+            },
+        })
+        if (!orgData) {
+            throw new AppError("Organization not found", 404)
+        }
+
+        await client.json.set(data.email, ".", orgData);
     }
 
     // Check password
-    const isPasswordValid = await comparePasswords(data.org_password, orgData.password)
+    const isPasswordValid = await comparePasswords(data.password, orgData?.password)
 
     if (!isPasswordValid) {
         throw new AppError("Invalid password", 401)
     }
 
-    const token = generateToken({ id: orgData.id, name: orgData.name });
+    const token = generateToken({ id: orgData.id });
 
     if (!token) {
         throw new AppError("Token generation failed", 500)
@@ -82,7 +84,6 @@ export const orgLoginFunction = async (data: orgSchema) => {
 
     return { orgData, token };
 }
-
 
 // Organization logout function
 export const orgLogoutFunction = async (orgId: string) => {

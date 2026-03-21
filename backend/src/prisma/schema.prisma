@@ -21,13 +21,13 @@ model Employee {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId Int?
+  organizationId String?
 
   @@map("employees")
 }
 
 model orgAdmin {
-  id             Int           @id @default(autoincrement())
+  id             String        @id @unique @default(uuid(7))
   firstName      String
   lastName       String
   email          String        @unique
@@ -35,13 +35,13 @@ model orgAdmin {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId Int?
+  organizationId String?
 
   @@map("org_admins")
 }
 
 model Organization {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @unique @default(uuid(7))
   name        String   @unique
   email       String   @unique
   contactName String
