@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
-import { orgRegisterFunction } from "../service/organization";
+import { orgLoginFunction, orgRegisterFunction } from "../service/organization";
 import { ApiResponse } from "../utils/apiResponse";
 import { handleAsync } from "../utils/asyncError";
+import { orgRegisterVal } from "../middleware/zod.validation";
+import { Cookie } from "../config/cookie";
 
 export const registerOrganization = handleAsync(async (req: Request, res: Response) => {
     // Extract organization details from the request body
@@ -9,11 +11,17 @@ export const registerOrganization = handleAsync(async (req: Request, res: Respon
         return ApiResponse.fail(res, "Request body is missing", 400);
     }
 
-    const org = orgRegisterFunction(req.body);
+    const validation = orgRegisterVal.safeParse(req.body);
 
-    // Send a success response with the organization data
+    if (!validation.success) {
+        return ApiResponse.fail(res, "Invalid organization data", 400, validation.error);
+    }
+
+    const org = await orgRegisterFunction(req.body);
+    Cookie.setCookie(res, "org_token", org.token);
     return ApiResponse.success(res, "organization registered successfully", org);
 });
+
 
 
 export const loginOrganization = handleAsync(async (req: Request, res: Response) => {
@@ -22,16 +30,23 @@ export const loginOrganization = handleAsync(async (req: Request, res: Response)
         return ApiResponse.fail(res, "Request body is missing", 400);
     }
 
-    const { email, password } = req.body;
+    // Validate the organization credentials
+    const validation = orgRegisterVal.safeParse(req.body)
 
-    if (!email || !password) {
-        return ApiResponse.fail(res, "Email and password are required", 400);
+    if (!validation.success) {
+        return ApiResponse.fail(res, "Invalid organization data", 400, validation.error);
     }
 
-    // Perform login logic here (e.g., validate credentials, generate token)
-    // For demonstration, we'll assume the login is successful and return a dummy token
-    const token = "dummy-jwt-token";
+    // Call the organization login function
+    const orgData = await orgLoginFunction(req.body);
+
+    if (!orgData) {
+        return ApiResponse.fail(res, "Organization login failed", 401);
+    }
+
+    // set cookie with the token
+    Cookie.setCookie(res, "org_token", orgData.token);
 
     // Send a success response with the token
-    return ApiResponse.success(res, "Login successful", { token });
+    return ApiResponse.success(res, "Login successful", orgData.orgData);
 });

@@ -1,10 +1,10 @@
 import { Router } from "express";
+import { loginOrganization, registerOrganization } from "../controller/org.control";
 
 export const orgRoute = Router();
 
-// Organization registration route
-orgRoute.post("/register", async (req, res) => {
-    // Registration logic here
-    
-    res.status(201).json({ message: "Organization registered successfully" });
-});
+// Authentication routes for organizations
+orgRoute.post("/register", registerOrganization);
+orgRoute.post("/login", loginOrganization);
+
+

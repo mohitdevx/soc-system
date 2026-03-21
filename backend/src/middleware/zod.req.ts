@@ -1,13 +1,11 @@
 import { Request, Response, NextFunction } from "express"
-import { orgRegisterVal } from "./zod.validation"
+import { OrgRegisterType, orgRegisterVal } from "./zod.validation"
 import { ApiResponse } from "../utils/apiResponse";
 
-export const zodValidator = async (req: Request, res: Response, next: NextFunction) => {
-    const validation = orgRegisterVal.safeParse(req.body);
+export const zodValidator = async (myfunc: () => OrgRegisterType, body) => {
+    const validation = myfunc
 
     if (!validation.success) {
         return ApiResponse.fail(res, 'validation error', 400, validation.error)
     }
-
-    next();
 }
