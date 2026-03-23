@@ -5,8 +5,10 @@ __pycache__
 *.pyd
 *.pkl
 *.db
+.env
 
 .test.py
 build 
 agent.egg-info
+
 

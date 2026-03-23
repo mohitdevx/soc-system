@@ -1,6 +1,8 @@
 import { createClient } from "redis";
 
-export const redis = createClient().on('err', (err) =>
+const redisUrl = process.env.REDIS_URL;
+
+export const redis = createClient({ url: redisUrl }).on('err', (err) =>
     console.log("Error connecting Redis", err))
     .connect();
 

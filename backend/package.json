@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "dev": "tsc --watch & nodemon dist/server.js",
+    "generate": "pnpm prisma generate",
     "start": "node dist/server.js"
   },
   "keywords": [],

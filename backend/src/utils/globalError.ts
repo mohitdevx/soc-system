@@ -15,10 +15,10 @@ const prodError = (err: AppError, req: Request, res: Response, next: NextFunctio
     const statusCode = err.statuscode || 500;
 
     if (err.isOperational) {
-        return ApiResponse.error(res, message, statusCode)
+        return ApiResponse.error(res, message, statusCode, { error: err })
     }
 
-    return ApiResponse.error(res, "something went wrong !", 500)
+    return ApiResponse.error(res, "something went wrong !", 500, { error: "something went wrong !" })
 }
 
 // Global Errorhandler 

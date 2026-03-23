@@ -30,7 +30,7 @@ app.use((req, res, next) => {
         req.body = msgpack.decode(Buffer.concat(data));
         next();
       } catch (err) {
-        return ApiResponse.fail(res, "bad request format", 400, err)
+        return ApiResponse.fail(res, "bad request format", 400, { error: err })
       }
     });
   } else {
@@ -42,4 +42,3 @@ app.use(appMiddleware);
 app.use("/api/v1/agent", agentRoute);
 app.use("/api/org", orgRoute);
 app.use(globalErrorHandler);
-

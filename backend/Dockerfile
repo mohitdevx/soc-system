@@ -6,9 +6,7 @@ RUN npm install -g pnpm
 
 # Setting up working dir & copy dependencies file 
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-COPY ./src/prisma.config.ts ./src/prisma.config.ts
-COPY ./src/prisma ./src/prisma
+COPY package.json pnpm-lock.yaml prisma.config.ts ./
 
 RUN pnpm install --frozen-lockfile
 
@@ -18,14 +16,14 @@ RUN pnpm install
 # copy project
 COPY . .
 
-# Generate Prisma
-RUN pnpm exec prisma generate
+# Generate prisma client 
+RUN pnpm run generate
 
 # Typescript Build
 RUN pnpm run build
 
+# Command line argument & image runner 
+CMD ["sh", "-c", "node dist/server.js"]
+
 #Expose Port 
 EXPOSE 3000
-
-# Command line argument & image runner 
-CMD ["sh", "-c", "pnpm exec prisma migrate deploy && node dist/server.js"]

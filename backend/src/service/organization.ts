@@ -65,7 +65,7 @@ export const orgLoginFunction = async (data: orgSchema) => {
         if (!orgData) {
             throw new AppError("Organization not found", 404)
         }
-
+        console.log("Organization data fetched from database:", orgData);
         await client.json.set(data.email, ".", orgData);
     }
 

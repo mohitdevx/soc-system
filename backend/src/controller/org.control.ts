@@ -14,7 +14,7 @@ export const registerOrganization = handleAsync(async (req: Request, res: Respon
     const validation = orgRegisterVal.safeParse(req.body);
 
     if (!validation.success) {
-        return ApiResponse.fail(res, "Invalid organization data", 400, validation.error.message);
+        return ApiResponse.fail(res, "Invalid organization data", 400, { error: validation.error.flatten().fieldErrors });
     }
 
     const org = await orgRegisterFunction(req.body);
