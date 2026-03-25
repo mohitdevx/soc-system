@@ -47,7 +47,6 @@ export const orgRegisterFunction = async (data: orgSchema): Promise<Register> =>
     return { orgData, token };
 }
 
-
 // Organization login function
 export const orgLoginFunction = async (data: orgSchema) => {
     if (!data.name || !data.email || !data.password) {

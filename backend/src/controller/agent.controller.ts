@@ -22,6 +22,9 @@ export class AppEngine {
     async run() {
         for (const stream of this.dataStreams.streams) {
             for (const process of this.processes) {
+                if (process?.name === 'universal') {
+                    await process.func(stream)
+                }
                 if (process?.name === stream?.log_name) {
                     await process.func(stream)
                 }
