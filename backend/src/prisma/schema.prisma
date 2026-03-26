@@ -51,6 +51,16 @@ model Organization {
 
   employees Employee[]
   orgAdmins orgAdmin[]
+  streams   Streams[]
 
   @@map("organizations")
+}
+
+model Streams {
+  id     String        @unique @default(uuid(7))
+  org    Organization? @relation(fields: [orgId], references: [id])
+  orgId  String
+  stream Json
+
+  @@map("stream")
 }

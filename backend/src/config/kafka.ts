@@ -15,6 +15,7 @@ export const connectKafka = async () => {
     try {
         await kafkaProducer.connect();
         await kafkaConsumer.connect();
+        console.log("kafka connection successfull!")
     } catch (error) {
         console.error("Error connecting to Kafka:", error);
         throw new Error("Failed to connect to Kafka");

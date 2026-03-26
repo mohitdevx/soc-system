@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 import { logParser } from "../service/agent.service";
 import { AppEngine } from "../controller/agent.controller";
 import { bruteAction, bruteForceDectection } from "../service/brute";
-import { kafkaService } from "../service/kafka.service";
+import { kafkaService, saveLogsToDB } from "../service/kafka.service";
 
 export const agentRoute = Router();
 
@@ -24,7 +24,6 @@ agentRoute.post("/stream", async (req: Request, res: Response) => {
     pipeline.register({ name: 'apache2.log', func: bruteForceDectection });
     pipeline.register({ name: 'apache2.log', func: bruteAction });
     pipeline.register({ name: 'universal', func: kafkaService });
-
     await pipeline.run()
     console.log(pipeline.dataStreams)
     return ApiResponse.success(res, "success")

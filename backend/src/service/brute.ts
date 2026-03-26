@@ -1,10 +1,10 @@
 import { logSign } from "../utils/processSign";
 import { redis } from "../config/redis";
 import axios from "axios";
+import { saveLogsToDB } from "./kafka.service";
 
 // BrutFoce Detection System 
 export const bruteForceDectection = async (stream: logSign): Promise<void> => {
-    console.log('this funcion called')
     const { ip_addr, date_time } = stream.data;
     const clinet = await redis;
 
@@ -18,9 +18,14 @@ export const bruteForceDectection = async (stream: logSign): Promise<void> => {
         if (current >= 5) {
             console.log("brute force dectected !")
             stream.signal = true;
-            console.log("this is signal" , stream.signal)
+            console.log("this is signal", stream.signal)
             stream.data = {
                 action: `sudo iptables -A INPUT -s ${ip_addr} -j DROP`
+            }
+
+            if (current >= 15) {
+                console.log("limit hit...")
+                await saveLogsToDB()
             }
             return;
         }
