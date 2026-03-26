@@ -22,7 +22,10 @@ def send_logs(timeout):
                 event_queue.empty()
                 break
         if batch:
-            asyncio.run(send_batch(batch, timeout))
+            try:
+                asyncio.run(send_batch(batch, timeout))
+            except Exception as e:
+                print('Error => ', e)
 
 
 async def send_batch(raw, time):
