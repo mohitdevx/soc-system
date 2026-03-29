@@ -1,8 +1,6 @@
 import { kafkaConsumer, kafkaProducer } from "../config/kafka";
 import { prisma } from "../config/prisma.client";
-import { StreamsScalarFieldEnum } from "../generated/prisma/internal/prismaNamespace";
 import { logSign } from "../utils/processSign";
-
 
 export const kafkaService = async (stream: logSign): Promise<void> => {
     kafkaProducer.send({
@@ -12,7 +10,6 @@ export const kafkaService = async (stream: logSign): Promise<void> => {
         ]
     })
 }
-
 
 const savelogs = async (logs: object) => {
     const saved = await prisma.streams.create({
@@ -56,7 +53,7 @@ export const saveLogsToDB = async () => {
             }
 
             if (records.length > 0) {
-                console.log("this is records => ", records)
+                await savelogs(records)
             }
 
             for (const message of batch.messages) {

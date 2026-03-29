@@ -1,10 +1,10 @@
 import express, { Express } from "express";
 import cors from "cors";
-import { agentRoute } from "./routes/agentRoute";
+import { agentRoute } from "./routes/agent.routes";
 import { globalErrorHandler } from "./utils/globalError";
 import msgpack from "msgpack-lite";
 import { ApiResponse } from "./utils/apiResponse";
-import { orgRoute } from "./routes/orgRoute";
+import { orgRoute } from "./routes/org.routes";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 

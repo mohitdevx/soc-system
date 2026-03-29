@@ -7,7 +7,7 @@ interface funcSign {
 
 type process = Array<funcSign>
 
-export class AppEngine {
+export class Engine {
     public dataStreams: agentStream;
     private processes: process = [];
 

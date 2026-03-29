@@ -38,7 +38,8 @@ export const bruteForceDectection = async (stream: logSign): Promise<void> => {
 }
 
 export const bruteAction = async (stream: logSign, urls: string[] = []): Promise<void> => {
-    console.log(stream?.signal)
+    console.log("this function is called !")
+    console.log("this is stream data => ", stream?.data)
     if (!stream.signal) {
         console.log("no signal found!")
         return;

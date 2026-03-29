@@ -1,11 +1,12 @@
-import z, { tuple } from "zod"
+import z from "zod"
 import { orgRegisterVal } from "../middleware/zod.validation"
 import { AppError } from "../utils/errorClass"
-import { Organization, Prisma } from "../generated/prisma/browser"
+import { Organization } from "../generated/prisma/browser"
 import { prisma } from "../config/prisma.client"
 import { comparePasswords, hashPassword } from "../utils/bcrypt"
 import { generateToken } from "../utils/jwt"
 import { redis } from "../config/redis"
+import { prismaVersion } from "../generated/prisma/internal/prismaNamespace"
 
 type orgSchema = z.infer<typeof orgRegisterVal>
 
@@ -14,41 +15,38 @@ interface Register {
     token: string
 }
 
-export const orgRegisterFunction = async (data: orgSchema): Promise<Register> => {
-    if (!data.name || !data.email || !data.contact || !data.password || !data.password) {
+const orgRegisterFunction = async (data: orgSchema): Promise<Register> => {
+    if (!data.name || !data.email || !data.password || !data.password) {
         throw new AppError("All fields are required", 400)
     }
-
+    const existingOrg = await prisma.organization.findUnique({
+        where: {
+            email: data.email,
+        },
+    })
+    if (existingOrg) {
+        throw new AppError("Organization with this email already exists", 400)
+    }
     // datbase logic 
     const orgData: Organization = await prisma.organization.create({
         data: {
             name: data.name,
             email: data.email,
-            contactName: data.contact,
-            password: await hashPassword(data.password)
+            password: await hashPassword(data.password),
         }
-    }).catch((error: Prisma.PrismaClientKnownRequestError) => {
-        if (error.code === 'P2002') {
-            throw new AppError("Organization with this name or email already exists", 400)
-        }
-        throw new AppError("An error occurred while registering the organization", 500)
     })
-
     if (!orgData) {
         throw new AppError("Organization registration failed", 500)
     }
-
     const token = generateToken({ id: orgData.id });
-
     if (!token) {
         throw new AppError("Token generation failed", 500)
     }
-
     return { orgData, token };
 }
 
 // Organization login function
-export const orgLoginFunction = async (data: orgSchema) => {
+const orgLoginFunction = async (data: orgSchema) => {
     if (!data.name || !data.email || !data.password) {
         throw new AppError("All fields are required", 400)
     }
@@ -84,26 +82,33 @@ export const orgLoginFunction = async (data: orgSchema) => {
     return { orgData, token };
 }
 
-// Organization logout function
-export const orgLogoutFunction = async (orgId: string) => {
+const getAnalystsFunction = async (orgId: string) => {
     if (!orgId) {
-        throw new AppError("Organization ID is required", 400)
+        throw new AppError("Organization ID is required", 400);
     }
 
-    // Invalidate the session or token for the organization
-    // This is a placeholder; actual implementation will depend on your auth system
-
-    return { message: "Organization logged out successfully" }
+    const analysts = await prisma.memberShips.findMany({
+        where: {
+            organizationId: orgId,
+            status: "ACTIVE"
+        },
+        select: {
+            user: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                }
+            }
+        }
+    })
+    
+    return analysts;
 }
 
-// Organization delete function
-export const orgDeleteFunction = async (orgId: string) => {
-    if (!orgId) {
-        throw new AppError("Organization ID is required", 400)
-    }
-
-    // Delete the organization from the database
-    // This is a placeholder; actual implementation will depend on your database logic
-
-    return { message: "Organization deleted successfully" }
+export const orgService = {
+    orgRegisterFunction,
+    orgLoginFunction,
+    getAnalystsFunction
 }
+

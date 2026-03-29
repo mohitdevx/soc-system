@@ -5,12 +5,12 @@ import { verifyToken } from "../utils/jwt";
 import { prisma } from "../config/prisma.client";
 import { redis } from "../config/redis";
 
-export const orgAuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.cookies.org_token && !req.headers.authorization) {
+export const analystAuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.cookies.token && !req.headers.authorization) {
         return ApiResponse.fail(res, "Unauthorized access", 401);
     }
 
-    const token = req.cookies.org_token || req?.headers?.authorization?.split(" ")[1];
+    const token = req.cookies.token || req?.headers?.authorization?.split(" ")[1];
 
     if (!token) {
         return ApiResponse.fail(res, "Unauthorized access", 401);
@@ -22,9 +22,9 @@ export const orgAuthMiddleware = async (req: Request, res: Response, next: NextF
     }
 
     const client = await redis;
-    let orgData: any = await client.json.get(decoded.id);
-    if (!orgData) {
-        orgData = await prisma.organization.findUnique({
+    let analystData: any = await client.json.get(decoded.id);
+    if (!analystData) {
+        analystData = await prisma.member.findUnique({
             where: {
                 id: decoded.id
             },
@@ -35,15 +35,15 @@ export const orgAuthMiddleware = async (req: Request, res: Response, next: NextF
             }
         })
 
-        if (orgData) {
-            await client.json.set(decoded.id, ".", orgData);
+        if (analystData) {
+            await client.json.set(decoded.id, ".", analystData);
         }
     }
 
-    if (!orgData) {
-        return ApiResponse.fail(res, "Organization not found", 404);
+    if (!analystData) {
+        return ApiResponse.fail(res, "Analyst not found", 404);
     }
 
-    req.org = orgData;
+    req.analyst = analystData;
     next();
 }
