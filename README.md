@@ -1,7 +1,6 @@
 # soc-system
 A SOC monitoring platform where companies monitor their applications in real-time. This project consists of two main parts: `agents` and a `backend`. Agents are deployed on the server, while the backend is a centralized system that performs logical decision-making based on the logs received from the agents.
 
-### ⚠️ Warning: This project is currently under active development.
 
 ## Table of Conents 
 - [Installation](#installation)
