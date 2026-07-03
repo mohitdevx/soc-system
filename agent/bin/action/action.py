@@ -1,27 +1,17 @@
-import subprocess
-from fastapi import FastAPI
-from pydantic import BaseModel
-import uvicorn
+ALLOWED_ACTIONS = {"scan", "monitor", "report"}
 
-
-class BackendSchema(BaseModel):
-    action: str
-
-
-app = FastAPI()
-
+def validate_action(action: str) -> bool:
+    return action in ALLOWED_ACTIONS
 
 @app.post("/agent/action")
 async def take_action(action: BackendSchema):
-    data = action.action
-    cmd = data.split(" ")
-    try:
-        subprocess.run(cmd)
-    except:
-        return {"success": False}
-
+    if not validate_action(action.action):
+        return {"success": False, "error": "Invalid action"}
+    
+    if action.action == "scan":
+        subprocess.run(["scanner", action.get("target", "default")])
+    elif action.action == "monitor":
+        subprocess.run(["monitor", action.get("interval", "60")])
+    # ... other allowed actions
+    
     return {"success": "ok"}
-
-
-def run():
-    uvicorn.run(app, host="0.0.0.0", port=5000)
